@@ -25,8 +25,10 @@ template <class Query, class Object> class WeaklyQueueishSearch {
         std::vector<std::list<store>> queues;
         std::vector<SearchStructure<Query, store>> search_structures;
         void repair_queue(int queue_index);
+        int min_size(int queue_index);
+        int max_size(int queue_index);
 
-    public:
+public:
         Object* query(Query);
 
 };
