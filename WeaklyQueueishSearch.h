@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <list>
+#include <set>
 #include "SearchStructure.h"
 
 template <class Query, class Object> class WeaklyQueueishSearch {
@@ -20,16 +21,19 @@ template <class Query, class Object> class WeaklyQueueishSearch {
 
     private:
         int num_elems;
+        //max queue index log log num_elems
         int k;
         //we use std::list (a doubly linked list) as our queue implementation
         std::vector<std::list<store>> queues;
-        std::vector<SearchStructure<Query, store>> search_structures;
+        std::vector<SearchStructure<Query, store>*> search_structures;
         void repair_queue(int queue_index);
         int min_size(int queue_index);
         int max_size(int queue_index);
 
 public:
         Object* query(Query);
+
+    WeaklyQueueishSearch(std::vector<Object>);
 
 };
 
