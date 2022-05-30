@@ -8,7 +8,7 @@
 #include <list>
 #include <cmath>
 #include <iostream>
-
+#include <iterator>
 #include "Dict.h"
 
 template <class Key, class Value> class WeaklyQueueishDict {
@@ -68,23 +68,17 @@ std::optional<Value> WeaklyQueueishDict<Key, Value>::query(Key q) {
 template <class Key, class Value>
 void WeaklyQueueishDict<Key, Value>::repair_queue(int queue_index) {
 //    std::cout << "queue repair " << queue_index << std::endl;
-    //check if index is in bounds
-    if (queue_index >= k) {
-        std::cerr << "error: out of bounds queue access" << std::endl;
-        return;
-    }
 
     //check if queue is too small
-    if (queues[queue_index].size() < min_size(queue_index)) {
-        int to_steal = max_size(queue_index) - queues[queue_index].size();
+    int curr_index = queue_index;
+    while (queues[curr_index].size() < min_size(curr_index)) {
+        int to_steal = max_size(curr_index) - queues[curr_index].size();
 
-        //do the stealing
-        int stolen = 0;
-        while (stolen < to_steal) {
-            queues[queue_index].push_front(queues[queue_index + 1].back());
-            queues[queue_index + 1].pop_back();
-            stolen++;
-        }
+        //take the from the back of the next queue to the front of the current queue
+        auto first = std::next(queues[curr_index + 1].end(), -1 * to_steal);
+        auto last = queues[curr_index + 1].end();
+        queues[curr_index].splice(queues[curr_index].begin(), queues[curr_index + 1], first, last);
+
 
         //TODO wasteful in that we don't transfer collection to next queue to repair
         //repair the associated data structure
@@ -98,13 +92,14 @@ void WeaklyQueueishDict<Key, Value>::repair_queue(int queue_index) {
                         it,
                         i,
                 };
-                elems.push_back({obj.first, s});
+                elems.emplace_back(obj.first, s);
             }
         }
-        dicts[queue_index] = Dict(elems);
+
+        dicts[curr_index] = Dict(elems);
 
         //we may need to repair the queue we took values from
-        repair_queue(queue_index + 1);
+        curr_index++;
     }
 }
 
