@@ -6,17 +6,13 @@
 #define WEAKLY_QUEUEISH_STRUCTURES_SEARCHSTRUCTURE_H
 
 #include <vector>
+#include <map>
 
 template <class Query, class Data>
 class SearchStructure {
-    virtual Data* query(Query q) = 0;
-    SearchStructure(std::vector<Data>) = 0;
+    virtual Data query(Query q) = 0;
+    virtual SearchStructure<Query, Data>* createStructure(std::vector<std::pair<Query, Data>>) = 0;
 };
-
-class dict : SearchStructure<int, std::string> {
-    
-};
-
 
 
 #endif //WEAKLY_QUEUEISH_STRUCTURES_SEARCHSTRUCTURE_H
