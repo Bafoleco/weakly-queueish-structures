@@ -28,8 +28,8 @@ public:
 template<class Key, class Value>
 std::optional<Value> VecDict<Key, Value>::query(Key key) {
 
-    std::cout << "searching for: " << key << std::endl;
-    std::cout << "we store: " << pairs.size() << " elems" << std::endl;
+//    std::cout << "searching for: " << key << std::endl;
+//    std::cout << "we store: " << pairs.size() << " elems" << std::endl;
 
 //    for (KeyValuePair pair : pairs) {
 //        std::cout << pair.first << std::endl;
@@ -40,7 +40,7 @@ std::optional<Value> VecDict<Key, Value>::query(Key key) {
     if (pair == pairs.end() || (*pair).first != key) {
         return {};
     }
-    std::cout << "pair found: (" << (*pair).first << ", " << (*pair).first << ") " << std::endl;
+//    std::cout << "pair found: (" << (*pair).first << ", " << (*pair).first << ") " << std::endl;
 
     return (*pair).second;
 }

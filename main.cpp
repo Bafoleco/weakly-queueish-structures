@@ -12,7 +12,7 @@ template <class Key, class Value> void profileDict() {
 }
 
 int testWeaklyQueueishVecDict() {
-    int maxValue = 1024;
+    int maxValue = 1024 * 1024;
 
     std::vector<std::pair<int, std::string>> associations;
     for (int i = 0; i < maxValue; i++) {
@@ -23,12 +23,8 @@ int testWeaklyQueueishVecDict() {
 
     std::cout << "Built structure" << std::endl;
 
-    for (int i = 0; i < maxValue; i++) {
-        std::cout << weaklyQueueishVecDict.query(i).value() << std::endl;
-    }
-
 //    for (int i = 0; i < maxValue; i++) {
-//        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+//        std::cout << weaklyQueueishVecDict.query(i).value() << std::endl;
 //    }
 
     std::cout << "Starting queries:" << std::endl;
@@ -37,7 +33,7 @@ int testWeaklyQueueishVecDict() {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iters; i++) {
         for (int j = 0; j < maxValue; j++) {
-            weaklyQueueishVecDict.query(j);
+            weaklyQueueishVecDict.query(0);
         }
     }
     auto end = std::chrono::high_resolution_clock::now();
@@ -56,7 +52,7 @@ int testWeaklyQueueishVecDict() {
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iters; i++) {
         for (int j = 0; j < maxValue; j++) {
-            dict.query(j);
+            dict.query(0);
         }
     }
     end = std::chrono::high_resolution_clock::now();
@@ -73,28 +69,33 @@ int testWeaklyQueueishVecDict() {
 
 int main() {
 
-//    testWeaklyQueueishVecDict();
+    testWeaklyQueueishVecDict();
 
-    int maxValue = 1024;
-
-    std::vector<std::pair<int, std::string>> associations;
-    for (int i = 0; i < maxValue; i++) {
-        associations.emplace_back(i, std::to_string(i) + "s");
-//        associations.emplace_back(i, i);
-    }
-
-    WeaklyQueueishDict<int, std::string> weaklyQueueishDict(associations);
-//    WeaklyQueueishDict<int, int> weaklyQueueishDict(associations);
-
-    std::cout << "Built structure" << std::endl;
-
-    for (int i = 0; i < maxValue; i++) {
-        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
-    }
-
-    for (int i = 100; i < maxValue; i++) {
-        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
-    }
+//    int maxValue = 1024;
+//
+//    std::vector<std::pair<int, std::string>> associations;
+//    for (int i = 0; i < maxValue; i++) {
+//        associations.emplace_back(i, std::to_string(i) + "s");
+////        associations.emplace_back(i, i);
+//    }
+//
+//    WeaklyQueueishDict<int, std::string> weaklyQueueishDict(associations);
+////    WeaklyQueueishDict<int, int> weaklyQueueishDict(associations);
+//
+//    std::cout << "Built structure" << std::endl;
+//
+//    for (int i = 0; i < maxValue; i++) {
+//        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+//    }
+//
+//    for (int i = 500; i < maxValue; i++) {
+//        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+//    }
+//
+//    for (int i = maxValue - 1; i > 0; i--) {
+//        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+//    }
+//
 
 //
 //    std::cout << "Starting queries:" << std::endl;

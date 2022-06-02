@@ -42,7 +42,6 @@ template <class Key, class Value>
 std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
     for (int i = 0; i < k; i++) {
         std::optional<store> search_result_opt = dicts[i].query(q);
-        std::cout << "search structure " << i << std::endl;
         if (search_result_opt.has_value()) {
             store search_result = search_result_opt.value();
 
@@ -51,21 +50,13 @@ std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
             KeyValuePair keyValuePair = search_result.keyValuePair;
             int queue_index = search_result.queue_index;
 
-            std::cout << "here " << i << std::endl;
-            std::cout << "here: " << KVPIndex << std::endl;
-
             //do the required transfer of the element
-            queues[queue_index].erase(elem_iter);
-            queues.back().push_front(KVPIndex);
-
-            std::cout << "prerepair " << i << std::endl;
+            queues.back().splice(queues.back().end(), queues[queue_index], elem_iter);
 
             //repair the queue
             if (queues[queue_index].size() < min_size(queue_index)) {
                 repair_queue(queue_index);
             }
-
-            std::cout << "repaired " << i << std::endl;
 
             return keyValuePair.second;
         }

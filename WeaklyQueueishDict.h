@@ -50,8 +50,7 @@ std::optional<Value> WeaklyQueueishDict<Key, Value>::query(Key q) {
             int queue_index = search_result.queue_index;
 
             //do the required transfer of the element
-            queues[queue_index].erase(elem_iter);
-            queues.back().push_front(keyValuePair);
+            queues.back().splice(queues.back().end(), queues[queue_index], elem_iter);
 
             //repair the queue
             if (queues[queue_index].size() < min_size(queue_index)) {
