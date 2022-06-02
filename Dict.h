@@ -20,16 +20,19 @@ public:
 template<class Key, class Value>
 std::optional<Value> Dict<Key, Value>::query(Key key) {
     if (dict.count(key) != 0) {
+        dict[key];
+    }
+    if (dict.count(key) != 0) {
         return dict[key];
     }
     return {};
 }
 
 template<class Key, class Value>
-Dict<Key, Value>::Dict(std::vector<std::pair<Key, Value>> pairs) {
-    for (auto it : pairs) {
-        dict[it.first] = it.second;
-    }
+Dict<Key, Value>::Dict(std::vector<std::pair<Key, Value>> pairs) : dict(pairs.begin(), pairs.end()) {
+//    for (auto it : pairs) {
+//        dict[it.first] = it.second;
+//    }
 }
 
 #endif //WEAKLY_QUEUEISH_STRUCTURES_DICT_H
