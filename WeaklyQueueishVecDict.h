@@ -41,12 +41,13 @@ public:
 template <class Key, class Value>
 std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
     for (int i = 0; i < k; i++) {
+//        std::cout << "try to find in structure: " << i << std::endl;
         std::optional<store> search_result_opt = dicts[i].query(q);
+//        std::cout << search_result_opt.has_value() << std::endl;
         if (search_result_opt.has_value()) {
             store search_result = search_result_opt.value();
 
             auto elem_iter = search_result.queue_ptr;
-            int KVPIndex = *elem_iter;
             KeyValuePair keyValuePair = search_result.keyValuePair;
             int queue_index = search_result.queue_index;
 

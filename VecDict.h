@@ -38,7 +38,8 @@ std::optional<Value> VecDict<Key, Value>::query(Key key) {
     auto comp = [](KeyValuePair x, Key y){ return x.first < y; };
     auto pair = std::lower_bound(pairs.begin(), pairs.end(), key, comp);
     if (pair == pairs.end() || (*pair).first != key) {
-        return {};
+//        std::cout << "could not find " << key << std::endl;
+        return std::nullopt;
     }
 //    std::cout << "pair found: (" << (*pair).first << ", " << (*pair).first << ") " << std::endl;
 
