@@ -102,12 +102,6 @@ build CMakeFiles/weakly_queueish_structures.dir/generics_attempt/Test.cpp.o: CXX
   OBJECT_DIR = CMakeFiles/weakly_queueish_structures.dir
   OBJECT_FILE_DIR = CMakeFiles/weakly_queueish_structures.dir/generics_attempt
 
-build CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishDict.cpp.o: CXX_COMPILER__weakly_queueish_structures_Release /Users/bayfoleycox/cs166/weakly-queueish-structures/WeaklyQueueishDict.cpp || cmake_object_order_depends_target_weakly_queueish_structures
-  DEP_FILE = CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishDict.cpp.o.d
-  FLAGS = -O3 -DNDEBUG -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk -std=gnu++2a
-  OBJECT_DIR = CMakeFiles/weakly_queueish_structures.dir
-  OBJECT_FILE_DIR = CMakeFiles/weakly_queueish_structures.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target weakly_queueish_structures
@@ -116,7 +110,7 @@ build CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishDict.cpp.o: CXX_CO
 #############################################
 # Link the executable weakly_queueish_structures
 
-build weakly_queueish_structures: CXX_EXECUTABLE_LINKER__weakly_queueish_structures_Release CMakeFiles/weakly_queueish_structures.dir/main.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/WeaklyQueueishSearch.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/SearchStructure.cpp.o CMakeFiles/weakly_queueish_structures.dir/Dict.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/Test.cpp.o CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishDict.cpp.o
+build weakly_queueish_structures: CXX_EXECUTABLE_LINKER__weakly_queueish_structures_Release CMakeFiles/weakly_queueish_structures.dir/main.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/WeaklyQueueishSearch.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/SearchStructure.cpp.o CMakeFiles/weakly_queueish_structures.dir/Dict.cpp.o CMakeFiles/weakly_queueish_structures.dir/generics_attempt/Test.cpp.o
   FLAGS = -O3 -DNDEBUG -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk
   OBJECT_DIR = CMakeFiles/weakly_queueish_structures.dir
   POST_BUILD = :

@@ -8,6 +8,7 @@
 #include "vector"
 #include "optional"
 #include "algorithm"
+#include <iostream>
 
 template <class Key, class Value> class VecDict {
 
@@ -27,9 +28,20 @@ public:
 template<class Key, class Value>
 std::optional<Value> VecDict<Key, Value>::query(Key key) {
 
-    auto comp = [](KeyValuePair x, Key y){ return x.first < y; };
+    std::cout << "searching for: " << key << std::endl;
+    std::cout << "we store: " << pairs.size() << " elems" << std::endl;
 
+//    for (KeyValuePair pair : pairs) {
+//        std::cout << pair.first << std::endl;
+//    }
+
+    auto comp = [](KeyValuePair x, Key y){ return x.first < y; };
     auto pair = std::lower_bound(pairs.begin(), pairs.end(), key, comp);
+    if (pair == pairs.end() || (*pair).first != key) {
+        return {};
+    }
+    std::cout << "pair found: (" << (*pair).first << ", " << (*pair).first << ") " << std::endl;
+
     return (*pair).second;
 }
 

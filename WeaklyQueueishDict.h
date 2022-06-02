@@ -30,6 +30,7 @@ template <class Key, class Value> class WeaklyQueueishDict {
         std::vector<std::list<KeyValuePair>> queues;
         //we keep a sorted list of the key value pairs as our dictionary
         std::vector<Dict<Key, store>> dicts;
+        //w
     void repair_queue(int queue_index);
         int min_size(int queue_index);
         int max_size(int queue_index);
@@ -71,7 +72,7 @@ void WeaklyQueueishDict<Key, Value>::repair_queue(int queue_index) {
     for (int i = 0; i < queue_index; i++) {
         for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
             KeyValuePair obj = *it;
-            store s = store{
+            store s = store {
                     obj,
                     it,
                     i,

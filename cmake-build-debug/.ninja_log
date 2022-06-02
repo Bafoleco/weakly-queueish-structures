@@ -1,9 +1,9 @@
 # ninja log v5
 4	568	1653862067021590443	CMakeFiles/weakly_queueish_structures.dir/DictFactory.cpp.o	6e00315748d07309
-1	116	1654199896412272220	build.ninja	ff3fdd925832ed80
-3	949	1653865880595544770	CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishSearch.cpp.o	df55f57f383f69c5
 3	292	1653866660363580537	CMakeFiles/weakly_queueish_structures.dir/generics_attempt/SearchStructure.cpp.o	a5f747bbfb4b2d28
 3	53	1653860594860651480	CMakeFiles/weakly_queueish_structures.dir/Generator.cpp.o	54f5f27922552991
+1	116	1654203866837281183	build.ninja	ff3fdd925832ed80
+3	949	1653865880595544770	CMakeFiles/weakly_queueish_structures.dir/WeaklyQueueishSearch.cpp.o	df55f57f383f69c5
 3	750	1653862067205075938	CMakeFiles/weakly_queueish_structures.dir/Factory.cpp.o	1d04a77c68859c28
 1197	1268	1653870607881591209	weakly_queueish_structures	403dbe41645a4c2a
 3	1197	1653870607777015464	CMakeFiles/weakly_queueish_structures.dir/main.cpp.o	5f22dbce8826aaac

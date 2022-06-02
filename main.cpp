@@ -73,28 +73,29 @@ int testWeaklyQueueishVecDict() {
 
 int main() {
 
-    testWeaklyQueueishVecDict();
+//    testWeaklyQueueishVecDict();
 
+    int maxValue = 1024;
 
-//    int maxValue = 1024 * 1024 * 10;
-//
-//    std::vector<std::pair<int, std::string>> associations;
-//    for (int i = 0; i < maxValue; i++) {
-//        associations.emplace_back(i, std::to_string(i) + "s");
-////        associations.emplace_back(i, i);
-//    }
-//
-//    WeaklyQueueishDict<int, std::string> weaklyQueueishDict(associations);
-////    WeaklyQueueishDict<int, int> weaklyQueueishDict(associations);
-//
-//    std::cout << "Built structure" << std::endl;
-//
-////    for (int i = 0; i < maxValue; i++) {
-////        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
-////    }
-////    for (int i = 0; i < maxValue; i++) {
-////        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
-////    }
+    std::vector<std::pair<int, std::string>> associations;
+    for (int i = 0; i < maxValue; i++) {
+        associations.emplace_back(i, std::to_string(i) + "s");
+//        associations.emplace_back(i, i);
+    }
+
+    WeaklyQueueishDict<int, std::string> weaklyQueueishDict(associations);
+//    WeaklyQueueishDict<int, int> weaklyQueueishDict(associations);
+
+    std::cout << "Built structure" << std::endl;
+
+    for (int i = 0; i < maxValue; i++) {
+        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+    }
+
+    for (int i = 100; i < maxValue; i++) {
+        std::cout << weaklyQueueishDict.query(i).value() << std::endl;
+    }
+
 //
 //    std::cout << "Starting queries:" << std::endl;
 //
