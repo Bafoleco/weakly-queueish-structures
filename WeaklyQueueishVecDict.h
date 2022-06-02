@@ -17,8 +17,7 @@ template <class Key, class Value> class WeaklyQueueishVecDict {
 
     struct store {
         KeyValuePair keyValuePair;
-        typename std::list<int>::iterator queue_ptr;
-        int queue_index;
+        typename std::list<std::pair<int, int>>::iterator queue_ptr;
     };
 
 private:
@@ -27,13 +26,14 @@ private:
     int k;
     //we use std::list (a doubly linked list) as our queue implementation
     //we store indexes into vector k
-    std::vector<std::list<int>> queues;
+    std::vector<std::list<std::pair<int, int>>> queues;
     //we keep a sorted list of the key value pairs as our dictionary
     std::vector<VecDict<Key, store>> dicts;
     void repair_queue(int queue_index);
     int min_size(int queue_index);
     int max_size(int queue_index);
 public:
+    void printQueue();
     std::optional<Value> query(Key);
     WeaklyQueueishVecDict(std::vector<KeyValuePair>);
 };
@@ -43,18 +43,29 @@ std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
     for (int i = 0; i < k; i++) {
 //        std::cout << "try to find in structure: " << i << std::endl;
         std::optional<store> search_result_opt = dicts[i].query(q);
+
 //        std::cout << search_result_opt.has_value() << std::endl;
         if (search_result_opt.has_value()) {
             store search_result = search_result_opt.value();
 
             auto elem_iter = search_result.queue_ptr;
             KeyValuePair keyValuePair = search_result.keyValuePair;
-            int queue_index = search_result.queue_index;
+            int queue_index = elem_iter->second;
+
+//            std::cout << "queue index: " << queue_index << std::endl;
+
 
             //do the required transfer of the element
             queues.back().splice(queues.back().end(), queues[queue_index], elem_iter);
+            //update the queue index of the element
+            elem_iter->second = k - 1;
 
-            //repair the queue
+//            //repair the queue
+//            std::cout << "queue index: " << queue_index << std::endl;
+//            std::cout << "queue size: " << queues[queue_index].size() << std::endl;
+
+            //find the queue where we must start repairing
+
             if (queues[queue_index].size() < min_size(queue_index)) {
                 repair_queue(queue_index);
             }
@@ -72,22 +83,32 @@ void WeaklyQueueishVecDict<Key, Value>::repair_queue(int queue_index) {
     //collect the elements from prior queues
     for (int i = 0; i < queue_index; i++) {
         for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
-            collectedIndices.push_back(*it);
+            collectedIndices.push_back(it->first);
         }
     }
 
     //we have already done first check if we call the function
     do {
+//        std::cout << "stealing. start size: " << queues[curr_index].size() << std::endl;
         int to_steal = max_size(curr_index) - queues[curr_index].size();
 
         //take the needed elements from the back of the next queue to the front of the current queue
-        auto first = std::next(queues[curr_index + 1].end(), -1 * to_steal);
-        auto last = queues[curr_index + 1].end();
-        queues[curr_index].splice(queues[curr_index].begin(), queues[curr_index + 1], first, last);
+//        auto last = std::next(queues[curr_index + 1].begin(), to_steal);
+//        auto first = queues[curr_index + 1].begin();
+//        queues[curr_index].splice(queues[curr_index].end(), queues[curr_index + 1], first, last);
+
+        int stolen = 0;
+        while (stolen < to_steal) {
+            queues[curr_index].splice(queues[curr_index].end(), queues[curr_index + 1], queues[curr_index + 1].begin());
+            queues[curr_index].back().second = curr_index;
+            stolen++;
+        }
+
+//        std::cout << "stealing. end size: " << queues[curr_index].size() << std::endl;
 
         //collect the elements from this queue
         for (auto it = queues[curr_index].begin(); it != queues[curr_index].end(); it++) {
-            collectedIndices.push_back(*it);
+            collectedIndices.push_back(it->first);
         }
 
         dicts[curr_index] = VecDict(dicts[k-1], collectedIndices);
@@ -123,7 +144,7 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
         for (int i = 0; i < k; i++) {
             queues.emplace_back();
             while (queues[i].size() < max_size(i) && vec_index < objects.size()) {
-                queues[i].push_back(vec_index);
+                queues[i].push_back({vec_index, i});
                 vec_index++;
             }
         }
@@ -133,11 +154,10 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
         for (int i = 0; i < k; i++) {
             //collect the elements
             for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
-                KeyValuePair obj = objects[*it];
+                KeyValuePair obj = objects[it->first];
                 store s = store {
                         obj,
                         it,
-                        i,
                 };
                 elems.push_back({obj.first, s});
             }
@@ -152,11 +172,23 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
         for (int i = 0; i < k - 1; i++) {
             //collect the indices
             for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
-                int index = *it;
-                indicesToInclude.push_back(index);
+                indicesToInclude.push_back(it->first);
             }
             dicts[i] = VecDict(dicts[k-1], indicesToInclude);
         }
+}
+
+template<class Key, class Value>
+void WeaklyQueueishVecDict<Key, Value>::printQueue() {
+        for (int i = 0; i < k; i++) {
+            std::cout << "queue " << i << ": ";
+            for (auto pair : queues[i]) {
+                std::cout << "(" <<  pair.first << ", " << pair.second << "), ";
+            }
+            std::cout << " | ";
+        }
+
+        std::cout << "k: " << k << std::endl;
 }
 
 #endif //WEAKLY_QUEUEISH_STRUCTURES_WEAKLYQUEUEISHVECDICT_H
