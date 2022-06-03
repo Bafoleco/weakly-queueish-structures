@@ -57,7 +57,7 @@ VecDict<Key, Value>::VecDict(std::vector<KeyValuePair> objects, int size) : pair
         std::cout << "BAD con init!!" << std::endl;
     }
 
-    std::cout << "size: " << size << std::endl;
+//    std::cout << "size: " << size << std::endl;
     for (int i = 0; i < objects.size(); i++) {
         pairs[i] = objects[i];
     }

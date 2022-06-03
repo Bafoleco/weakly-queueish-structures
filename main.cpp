@@ -8,7 +8,6 @@ template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIter
     WeaklyQueueishVecDict<Key, Value> weaklyQueueishVecDict(pairs);
     auto start = std::chrono::high_resolution_clock::now();
     for (int i : queries) {
-//        std::cout << "query " << std::endl;
         weaklyQueueishVecDict.query(i).value();
     }
     auto end = std::chrono::high_resolution_clock::now();
@@ -29,7 +28,7 @@ template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector
 
 //compares a VecDict with a WeaklyQueueishVecDict
 void compareVecDictWQVecDict() {
-    int maxValue = 1024 * 1024;
+    int maxValue = 1024 * 1024 * 10;
     int numIters = 5;
 
     std::vector<std::pair<int, std::string>> pairs;
@@ -40,17 +39,17 @@ void compareVecDictWQVecDict() {
     std::vector<int> queries;
     srand(time(nullptr));
 
-    for (int i = 0; i < numIters; i++) {
-        for (int j = 0; j < maxValue; j++) {
-            queries.push_back(rand() % maxValue);
-        }
-    }
-
 //    for (int i = 0; i < numIters; i++) {
 //        for (int j = 0; j < maxValue; j++) {
-//            queries.push_back(j);
+//            queries.push_back(rand() % maxValue);
 //        }
 //    }
+
+    for (int i = 0; i < numIters; i++) {
+        for (int j = 0; j < maxValue; j++) {
+            queries.push_back(j);
+        }
+    }
 
     int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(numIters, pairs, queries);
     int regularTime = timeVecDictIdeal(numIters, pairs, queries);
