@@ -3,6 +3,7 @@
 #include "Dict.h"
 #include "WeaklyQueueishDict.h"
 #include "WeaklyQueueishVecDict.h"
+#include <set>
 
 template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
     WeaklyQueueishVecDict<Key, Value> weaklyQueueishVecDict(pairs);
@@ -27,8 +28,8 @@ template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector
 }
 
 //compares a VecDict with a WeaklyQueueishVecDict
-void compareVecDictWQVecDict() {
-    int maxValue = 1024 * 1024 * 10;
+void compareVecDictWQVecDict(int val, int k) {
+    int maxValue = val;
     int numIters = 5;
 
     std::vector<std::pair<int, std::string>> pairs;
@@ -37,26 +38,30 @@ void compareVecDictWQVecDict() {
     }
 
     std::vector<int> queries;
+    std::set<int> noQuery;
     srand(time(nullptr));
 
-//    for (int i = 0; i < numIters; i++) {
-//        for (int j = 0; j < maxValue; j++) {
-//            queries.push_back(rand() % maxValue);
-//        }
-//    }
-
-    for (int i = 0; i < numIters; i++) {
-        for (int j = 0; j < maxValue; j++) {
-            queries.push_back(j);
+    for (int j = 0; j < k; j++) {
+        noQuery.insert(rand() % maxValue);
+    }
+    while (queries.size () < numIters * maxValue) {
+        for (int i = 0; i < numIters; i++) {
+            for (int j = 0; j < maxValue; j++) {
+                if (queries.size() >= numIters * maxValue)
+                    break;
+                if (!noQuery.contains(j))
+                    queries.push_back(j);
+            }
         }
     }
 
     int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(numIters, pairs, queries);
     int regularTime = timeVecDictIdeal(numIters, pairs, queries);
 
-    std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
-    std::cout << "regular time: " << regularTime << std::endl;
-    std::cout << "ratio: " << (double) weaklyQueueishTime/ regularTime << std::endl;
+    // std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
+    // std::cout << "regular time: " << regularTime << std::endl;
+    // std::cout << "ratio: " << (double) weaklyQueueishTime/ regularTime << std::endl;
+    std::cout << weaklyQueueishTime << ", " << regularTime ;
 }
 
 int testWeaklyQueueishVecDict() {
@@ -98,19 +103,24 @@ int testWeaklyQueueishVecDict() {
     end = std::chrono::high_resolution_clock::now();
     auto reg_duration = duration_cast<std::chrono::microseconds>(end - start);
 
-    std::cout << "Time taken by regular structure: "
-              << reg_duration.count() << " microseconds" << std::endl;
+    // std::cout << "Time taken by regular structure: "
+    //           << reg_duration.count() << " microseconds" << std::endl;
+    
 
-
-    std::cout << "ratio: " << (double) queueish_duration.count() / reg_duration.count() << std::endl;
+    //std::cout << "ratio: " << (double) queueish_duration.count() / reg_duration.count() << std::endl;
 
     return 0;
 }
 
 int main() {
 
-    compareVecDictWQVecDict();
-
+    std::cout << "Queueish value, weakly queueish, normal" << std::endl;
+    int maxValue = 1024 * 10;
+    for (int i = 0; i < maxValue; i+=100){
+        std::cout << i << ", ";
+        compareVecDictWQVecDict(maxValue, i);
+        std::cout << std::endl;
+    }
 //    testWeaklyQueueishVecDict();
 
 }
