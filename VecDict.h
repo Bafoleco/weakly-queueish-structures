@@ -18,7 +18,6 @@ private:
     //sorted vector holding the elements
     std::vector<KeyValuePair> pairs;
     int num_elems;
-    int max_size;
 
 public:
     std::optional<Value> query(Key key);
@@ -51,13 +50,6 @@ std::optional<Value> VecDict<Key, Value>::query(Key key) {
 
 template<class Key, class Value>
 VecDict<Key, Value>::VecDict(std::vector<KeyValuePair> objects, int size) : pairs(size), num_elems(objects.size()) {
-    max_size = size;
-
-    if (objects.size() > max_size) {
-        std::cout << "BAD con init!!" << std::endl;
-    }
-
-//    std::cout << "size: " << size << std::endl;
     for (int i = 0; i < objects.size(); i++) {
         pairs[i] = objects[i];
     }
@@ -68,7 +60,6 @@ VecDict<Key, Value>::VecDict(VecDict<Key, Value> &all, std::vector<int> &indices
     num_elems = indices.size();
     //we need to sort indices (can do efficiently with radix sort)
     std::sort(indices.begin(), indices.end());
-    max_size = size;
 
     //then construct by pulling elements from all objects
     for (int i = 0; i < indices.size(); i++) {

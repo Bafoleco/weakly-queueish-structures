@@ -3,8 +3,9 @@
 #include "Dict.h"
 #include "WeaklyQueueishDict.h"
 #include "WeaklyQueueishVecDict.h"
+#include <fstream>
 
-template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
+template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
     WeaklyQueueishVecDict<Key, Value> weaklyQueueishVecDict(pairs);
     auto start = std::chrono::high_resolution_clock::now();
     for (int i : queries) {
@@ -15,7 +16,7 @@ template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIter
     return duration.count();
 }
 
-template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
+template <class Key, class Value> int timeVecDictIdeal(std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
     VecDict<Key, Value> vecDict(pairs, pairs.size());
     auto start = std::chrono::high_resolution_clock::now();
     for (int i : queries) {
@@ -24,6 +25,14 @@ template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = duration_cast<std::chrono::microseconds>(end - start);
     return duration.count();
+}
+
+template <class A, class B> void printToCSV(std::string filename, std::vector<std::pair<A, B>> data) {
+    std::ofstream file("test_results/" + filename);
+    for (auto pair : data) {
+        file << pair.first << ", " << pair.second << std::endl;
+    }
+    file.close();
 }
 
 //compares a VecDict with a WeaklyQueueishVecDict
@@ -51,8 +60,8 @@ void compareVecDictWQVecDict() {
         }
     }
 
-    int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(numIters, pairs, queries);
-    int regularTime = timeVecDictIdeal(numIters, pairs, queries);
+    int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(pairs, queries);
+    int regularTime = timeVecDictIdeal(pairs, queries);
 
     std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
     std::cout << "regular time: " << regularTime << std::endl;
@@ -107,9 +116,36 @@ int testWeaklyQueueishVecDict() {
     return 0;
 }
 
+void timePerfectWorkflowAtDifferentSizes() {
+    std::vector<std::pair<int, int>> data;
+
+    int numVals = 8;
+    int numIters = 5;
+    while (numVals < 1024 * 1024 * 16) {
+        std::vector<std::pair<int, std::string>> pairs;
+        for (int i = 0; i < numVals; i++) {
+            pairs.emplace_back(i, std::to_string(i) + "s");
+        }
+
+        std::vector<int> queries;
+
+        for (int i = 0; i < numIters; i++) {
+            for (int j = 0; j < numVals; j++) {
+                queries.push_back(j);
+            }
+        }
+
+        int time = timeWeaklyQueueishVecDictIdeal(pairs, queries);
+        data.emplace_back(numVals, time);
+        numVals = numVals * 2;
+    }
+    printToCSV("perfect-workflow-diff-numelems.csv", data);
+}
+
 int main() {
 
-    compareVecDictWQVecDict();
+//    compareVecDictWQVecDict();
+    timePerfectWorkflowAtDifferentSizes();
 
 //    testWeaklyQueueishVecDict();
 

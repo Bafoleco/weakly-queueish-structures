@@ -55,20 +55,12 @@ std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
             KeyValuePair keyValuePair = search_result.keyValuePair;
             int queue_index = elem_iter->second;
 
-//            std::cout << "queue index: " << queue_index << std::endl;
-
-
             //do the required transfer of the element
             queues.back().splice(queues.back().end(), queues[queue_index], elem_iter);
             //update the queue index of the element
             elem_iter->second = k - 1;
 
-//            //repair the queue
-//            std::cout << "queue index: " << queue_index << std::endl;
-//            std::cout << "queue size: " << queues[queue_index].size() << std::endl;
-
-            //find the queue where we must start repairing
-
+            //repair the queue
             if (queues[queue_index].size() < min_size(queue_index)) {
                 repair_queue(queue_index);
             }
@@ -83,14 +75,14 @@ template <class Key, class Value>
 void WeaklyQueueishVecDict<Key, Value>::repair_queue(int queue_index) {
     int curr_index = queue_index;
     //collect the elements from prior queues
-    int maxDictSize = 0;
+//    int maxDictSize = 0;
     int numCollected = 0;
     for (int i = 0; i < queue_index; i++) {
         for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
             collectedIndices[numCollected] = it->first;
             numCollected++;
         }
-        maxDictSize += max_size(i);
+//        maxDictSize += max_size(i);
     }
 
     //we have already done first check if we call the function
@@ -111,11 +103,10 @@ void WeaklyQueueishVecDict<Key, Value>::repair_queue(int queue_index) {
             numCollected++;
         }
 
-        maxDictSize += max_size(curr_index);
+//        maxDictSize += max_size(curr_index);
 //        dicts[curr_index] = VecDict(dicts[k-1], collectedIndices, maxDictSize);
         dicts[curr_index].overwrite(dicts[k-1], collectedIndices, numCollected);
 
-//        std::cout << "num collected: " << numCollected << std::endl;
         //we may need to repair the queue we took values from
         curr_index++;
     } while (queues[curr_index].size() < min_size(curr_index));
