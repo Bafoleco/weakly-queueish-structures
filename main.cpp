@@ -4,27 +4,23 @@
 #include "WeaklyQueueishDict.h"
 #include "WeaklyQueueishVecDict.h"
 
-template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs) {
+template <class Key, class Value> int timeWeaklyQueueishVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
     WeaklyQueueishVecDict<Key, Value> weaklyQueueishVecDict(pairs);
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < numIters; i++) {
-        for (int j = 0; j < pairs.size(); j++) {
-//            std::cout << "search for: " << j << std::endl;
-            weaklyQueueishVecDict.query(0).value();
-        }
+    for (int i : queries) {
+//        std::cout << "query " << std::endl;
+        weaklyQueueishVecDict.query(i).value();
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = duration_cast<std::chrono::microseconds>(end - start);
     return duration.count();
 }
 
-template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs) {
-    VecDict<Key, Value> vecDict(pairs);
+template <class Key, class Value> int timeVecDictIdeal(int numIters, std::vector<std::pair<Key, Value>> pairs, std::vector<int> queries) {
+    VecDict<Key, Value> vecDict(pairs, pairs.size());
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < numIters; i++) {
-        for (int j = 0; j < pairs.size(); j++) {
-            vecDict.query(0).value();
-        }
+    for (int i : queries) {
+        vecDict.query(i).value();
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = duration_cast<std::chrono::microseconds>(end - start);
@@ -41,8 +37,23 @@ void compareVecDictWQVecDict() {
         pairs.emplace_back(i, std::to_string(i) + "s");
     }
 
-    int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(numIters, pairs);
-    int regularTime = timeVecDictIdeal(numIters, pairs);
+    std::vector<int> queries;
+    srand(time(nullptr));
+
+    for (int i = 0; i < numIters; i++) {
+        for (int j = 0; j < maxValue; j++) {
+            queries.push_back(rand() % maxValue);
+        }
+    }
+
+//    for (int i = 0; i < numIters; i++) {
+//        for (int j = 0; j < maxValue; j++) {
+//            queries.push_back(j);
+//        }
+//    }
+
+    int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(numIters, pairs, queries);
+    int regularTime = timeVecDictIdeal(numIters, pairs, queries);
 
     std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
     std::cout << "regular time: " << regularTime << std::endl;

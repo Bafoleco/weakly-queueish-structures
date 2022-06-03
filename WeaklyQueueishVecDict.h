@@ -29,6 +29,8 @@ private:
     std::vector<std::list<std::pair<int, int>>> queues;
     //we keep a sorted list of the key value pairs as our dictionary
     std::vector<VecDict<Key, store>> dicts;
+    //collection of indices used in reconstruction
+    std::vector<int> collectedIndices;
     void repair_queue(int queue_index);
     int min_size(int queue_index);
     int max_size(int queue_index);
@@ -41,8 +43,9 @@ public:
 template <class Key, class Value>
 std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
     for (int i = 0; i < k; i++) {
-//        std::cout << "try to find in structure: " << i << std::endl;
         std::optional<store> search_result_opt = dicts[i].query(q);
+
+//        printQueue();
 
 //        std::cout << search_result_opt.has_value() << std::endl;
         if (search_result_opt.has_value()) {
@@ -79,23 +82,21 @@ std::optional<Value> WeaklyQueueishVecDict<Key, Value>::query(Key q) {
 template <class Key, class Value>
 void WeaklyQueueishVecDict<Key, Value>::repair_queue(int queue_index) {
     int curr_index = queue_index;
-    std::vector<int> collectedIndices;
     //collect the elements from prior queues
+    int maxDictSize = 0;
+    int numCollected = 0;
     for (int i = 0; i < queue_index; i++) {
         for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
-            collectedIndices.push_back(it->first);
+            collectedIndices[numCollected] = it->first;
+            numCollected++;
         }
+        maxDictSize += max_size(i);
     }
 
     //we have already done first check if we call the function
     do {
 //        std::cout << "stealing. start size: " << queues[curr_index].size() << std::endl;
         int to_steal = max_size(curr_index) - queues[curr_index].size();
-
-        //take the needed elements from the back of the next queue to the front of the current queue
-//        auto last = std::next(queues[curr_index + 1].begin(), to_steal);
-//        auto first = queues[curr_index + 1].begin();
-//        queues[curr_index].splice(queues[curr_index].end(), queues[curr_index + 1], first, last);
 
         int stolen = 0;
         while (stolen < to_steal) {
@@ -104,15 +105,17 @@ void WeaklyQueueishVecDict<Key, Value>::repair_queue(int queue_index) {
             stolen++;
         }
 
-//        std::cout << "stealing. end size: " << queues[curr_index].size() << std::endl;
-
         //collect the elements from this queue
         for (auto it = queues[curr_index].begin(); it != queues[curr_index].end(); it++) {
-            collectedIndices.push_back(it->first);
+            collectedIndices[numCollected] = it->first;
+            numCollected++;
         }
 
-        dicts[curr_index] = VecDict(dicts[k-1], collectedIndices);
+        maxDictSize += max_size(curr_index);
+//        dicts[curr_index] = VecDict(dicts[k-1], collectedIndices, maxDictSize);
+        dicts[curr_index].overwrite(dicts[k-1], collectedIndices, numCollected);
 
+//        std::cout << "num collected: " << numCollected << std::endl;
         //we may need to repair the queue we took values from
         curr_index++;
     } while (queues[curr_index].size() < min_size(curr_index));
@@ -164,18 +167,22 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
         }
 
         //create the top level dict
-        dicts[k-1] = VecDict(elems);
+        dicts[k-1] = VecDict(elems, elems.size());
 
         //create lower level dicts from indices and top level dict
         std::vector<int> indicesToInclude;
 
+        int maxSize = 0;
         for (int i = 0; i < k - 1; i++) {
             //collect the indices
             for (auto it = queues[i].begin(); it != queues[i].end(); it++) {
                 indicesToInclude.push_back(it->first);
             }
-            dicts[i] = VecDict(dicts[k-1], indicesToInclude);
+            maxSize += max_size(i);
+            dicts[i] = VecDict(dicts[k-1], indicesToInclude, maxSize);
         }
+        std::cout << "max size: " << maxSize << std::endl;
+        collectedIndices = std::vector<int>(maxSize);
 }
 
 template<class Key, class Value>
