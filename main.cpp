@@ -37,9 +37,9 @@ template <class A, class B> void printToCSV(std::string filename, std::vector<st
 }
 
 //compares a VecDict with a WeaklyQueueishVecDict
-void compareVecDictWQVecDict(int val, int k) {
+void compareVecDictWQVecDictFile(int val, int k, std::ofstream& file) {
     int maxValue = val;
-    int numIters = 5;
+    int numIters = 20;
 
     std::vector<std::pair<int, std::string>> pairs;
     for (int i = 0; i < maxValue; i++) {
@@ -50,9 +50,10 @@ void compareVecDictWQVecDict(int val, int k) {
     std::set<int> noQuery;
     srand(time(nullptr));
 
-    for (int j = 0; j < k; j++) {
+    while (noQuery.size() < k) {
         noQuery.insert(rand() % maxValue);
     }
+
     while (queries.size () < numIters * maxValue) {
         for (int i = 0; i < numIters; i++) {
             for (int j = 0; j < maxValue; j++) {
@@ -64,13 +65,14 @@ void compareVecDictWQVecDict(int val, int k) {
         }
     }
 
+    std::cout << "start count" << std::endl;
     int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(pairs, queries);
     int regularTime = timeVecDictIdeal(pairs, queries);
 
-    // std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
-    // std::cout << "regular time: " << regularTime << std::endl;
-    // std::cout << "ratio: " << (double) weaklyQueueishTime/ regularTime << std::endl;
-    std::cout << weaklyQueueishTime << ", " << regularTime ;
+    std::cout << "weakly queueish time: " << weaklyQueueishTime << std::endl;
+    std::cout << "regular time: " << regularTime << std::endl;
+    std::cout << "ratio: " << (double) weaklyQueueishTime/ regularTime << std::endl;
+    file << weaklyQueueishTime << ", " << regularTime ;
 }
 
 int testWeaklyQueueishVecDict() {
@@ -147,18 +149,79 @@ void timePerfectWorkflowAtDifferentSizes() {
     printToCSV("perfect-workflow-diff-numelems.csv", data);
 }
 
+void testVaryingWorkflowComp() {
+    std::ofstream file("test_results/workflow-comp.csv");
+
+    file << "Queueish value, weakly queueish, normal" << std::endl;
+    int maxValue = 1024 * 1024 * 2;
+    for (int i = 0; i < 5; i+=5) {
+        file << i << ", ";
+        compareVecDictWQVecDictFile(maxValue, i, file);
+        file << std::endl;
+    }
+
+    file.close();
+}
+
+void testWorstcaseComp() {
+    std::ofstream file("test_results/worsecase-comp.csv");
+
+    file << "Queueish value, weakly queueish, normal" << std::endl;
+    int maxValue = 1024 * 1024;
+    file << maxValue << ", ";
+    compareVecDictWQVecDictFile(maxValue, maxValue-1, file);
+    file << std::endl;
+
+    file.close();
+}
+
+void comparePerfectWorkFlow(int size) {
+    std::ofstream file("test_results/bestcase-comp.csv");
+
+    file << "Queueish value, weakly queueish, normal" << std::endl;
+    int maxValue = 1024 * 1024;
+    std::vector<std::pair<int, std::string>> pairs;
+    for (int i = 0; i < maxValue; i++) {
+        pairs.emplace_back(i, std::to_string(i) + "s");
+    }
+
+    std::vector<int> queries;
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < maxValue; j++) {
+            queries.push_back(j);
+        }
+    }
+
+    int weaklyQueueishTime = timeWeaklyQueueishVecDictIdeal(pairs, queries);
+    int regularTime = timeVecDictIdeal(pairs, queries);
+
+    file << maxValue << ", ";
+    file << weaklyQueueishTime << ", ";
+    file << regularTime;
+    file << std::endl;
+    std::cout << maxValue << ", ";
+    std::cout << weaklyQueueishTime << ", ";
+    std::cout << regularTime;
+    std::cout << std::endl;
+
+    file.close();
+}
+
 int main() {
 
-//    compareVecDictWQVecDict();
+//    comparePerfectWorkFlow(1024 * 1024 * 16);
 //    timePerfectWorkflowAtDifferentSizes();
 
-    std::cout << "Queueish value, weakly queueish, normal" << std::endl;
-    int maxValue = 1024 * 10;
-    for (int i = 0; i < maxValue; i+=100){
-        std::cout << i << ", ";
-        compareVecDictWQVecDict(maxValue, i);
-        std::cout << std::endl;
-    }
 //    testWeaklyQueueishVecDict();
+
+//    testVaryingWorkflowComp();
+
+
+    std::vector<std::pair<int, std::string>> pairs;
+    for (int i = 0; i < 1024 * 1024; i++) {
+        pairs.emplace_back(i, std::to_string(i) + "s");
+    }
+
+    qu
 
 }

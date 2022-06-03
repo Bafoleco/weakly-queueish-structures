@@ -172,8 +172,10 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
             maxSize += max_size(i);
             dicts[i] = VecDict(dicts[k-1], indicesToInclude, maxSize);
         }
-        std::cout << "max size: " << maxSize << std::endl;
+//        std::cout << "max size: " << maxSize << std::endl;
         collectedIndices = std::vector<int>(maxSize);
+
+        std::cout << "k: " << k << std::endl;
 }
 
 template<class Key, class Value>
