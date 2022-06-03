@@ -10,6 +10,8 @@
 #include <iostream>
 #include <iterator>
 #include "Dict.h"
+#include <climits>
+
 
 template <class Key, class Value> class WeaklyQueueishDict {
 

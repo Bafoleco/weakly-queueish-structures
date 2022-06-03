@@ -150,21 +150,22 @@ void timePerfectWorkflowAtDifferentSizes() {
 }
 
 void testVaryingWorkflowComp() {
-    std::ofstream file("test_results/workflow-comp.csv");
+    std::ofstream file("../test_results/workflow-comp.csv");
 
     file << "Queueish value, weakly queueish, normal" << std::endl;
-    int maxValue = 1024 * 1024 * 2;
-    for (int i = 0; i < 5; i+=5) {
+    int maxValue = 1024 * 1024 * 4;
+    for (int i = 0; i < 100; i+=5) {
         file << i << ", ";
         compareVecDictWQVecDictFile(maxValue, i, file);
         file << std::endl;
     }
+    compareVecDictWQVecDictFile(maxValue, maxValue-1, file);
 
     file.close();
 }
 
 void testWorstcaseComp() {
-    std::ofstream file("test_results/worsecase-comp.csv");
+    std::ofstream file("../test_results/worsecase-comp.csv");
 
     file << "Queueish value, weakly queueish, normal" << std::endl;
     int maxValue = 1024 * 1024;
@@ -175,11 +176,8 @@ void testWorstcaseComp() {
     file.close();
 }
 
-void comparePerfectWorkFlow(int size) {
-    std::ofstream file("test_results/bestcase-comp.csv");
-
-    file << "Queueish value, weakly queueish, normal" << std::endl;
-    int maxValue = 1024 * 1024;
+void comparePerfectWorkFlow(int size, std::ofstream& file) {
+    int maxValue = size;
     std::vector<std::pair<int, std::string>> pairs;
     for (int i = 0; i < maxValue; i++) {
         pairs.emplace_back(i, std::to_string(i) + "s");
@@ -199,29 +197,25 @@ void comparePerfectWorkFlow(int size) {
     file << weaklyQueueishTime << ", ";
     file << regularTime;
     file << std::endl;
-    std::cout << maxValue << ", ";
-    std::cout << weaklyQueueishTime << ", ";
-    std::cout << regularTime;
-    std::cout << std::endl;
-
-    file.close();
 }
 
 int main() {
-
-//    comparePerfectWorkFlow(1024 * 1024 * 16);
-//    timePerfectWorkflowAtDifferentSizes();
-
-//    testWeaklyQueueishVecDict();
-
-//    testVaryingWorkflowComp();
-
-
-    std::vector<std::pair<int, std::string>> pairs;
-    for (int i = 0; i < 1024 * 1024; i++) {
-        pairs.emplace_back(i, std::to_string(i) + "s");
+    std::ofstream file("../test_results/bestcase-comp.csv");
+    file << "Num elements, weakly queueish, normal" << std::endl;
+    for (int i = 8; i < 1024 * 1024 * 16; i*=2){
+        comparePerfectWorkFlow(i, file);
     }
+    file.close();
+    // timePerfectWorkflowAtDifferentSizes();
 
-    qu
+    // testWeaklyQueueishVecDict();
+
+    testVaryingWorkflowComp();
+
+
+    // std::vector<std::pair<int, std::string>> pairs;
+    // for (int i = 0; i < 1024 * 1024; i++) {
+    //     pairs.emplace_back(i, std::to_string(i) + "s");
+    // }
 
 }

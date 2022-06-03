@@ -10,6 +10,8 @@
 #include <iostream>
 #include <iterator>
 #include "VecDict.h"
+#include <climits>
+
 
 template <class Key, class Value> class WeaklyQueueishVecDict {
 
@@ -174,8 +176,6 @@ WeaklyQueueishVecDict<Key, Value>::WeaklyQueueishVecDict(std::vector<KeyValuePai
         }
 //        std::cout << "max size: " << maxSize << std::endl;
         collectedIndices = std::vector<int>(maxSize);
-
-        std::cout << "k: " << k << std::endl;
 }
 
 template<class Key, class Value>

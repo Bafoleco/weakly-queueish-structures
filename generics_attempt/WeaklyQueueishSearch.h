@@ -12,6 +12,8 @@
 #include <cmath>
 
 #include "SearchStructure.h"
+#include <climits>
+
 
 template <class Query, class Object, class Factory> class WeaklyQueueishSearch {
 
